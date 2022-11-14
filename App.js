@@ -53,6 +53,17 @@ export default function App() {
 
   return (
     <AuthContext.Provider value={authData}>
+      {auth ? (
+        <View
+          style={{
+            flex: 1,
+            marginTop: 40,
+            justifyContent: "flex-start",
+          }}
+        >
+          <Button title="Log out" onPress={authData.logout} />
+        </View>
+      ) : null}
       <PaperProvider>{auth ? <AppNavigation /> : <AuthScreen />}</PaperProvider>
     </AuthContext.Provider>
   );
