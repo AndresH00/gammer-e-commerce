@@ -4,9 +4,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import AwesomeIcon from "react-native-vector-icons/FontAwesome";
 import colors from "../styles/colors";
+import AccountStack from "./AccountStack";
 import Home from "../screens/Home";
 import Favorites from "../screens/Favorites";
-import Account from "../screens/Account";
 import Cart from "../screens/Cart";
 
 const Tab = createMaterialBottomTabNavigator();
@@ -31,7 +31,7 @@ export default function AppNavigation() {
         <Tab.Screen name="cart" component={Cart} options={{ title: "Cart" }} />
         <Tab.Screen
           name="account"
-          component={Account}
+          component={AccountStack}
           options={{ title: "Account" }}
         />
       </Tab.Navigator>
