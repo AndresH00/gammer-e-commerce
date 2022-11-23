@@ -11,6 +11,7 @@ import { IconButton } from "react-native-paper";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { size } from "lodash";
 import { getAddressesApi } from "../../api/address";
+import AddressList from "../../components/Addresss/AddressList";
 import useAuth from "../../hooks/useAuth";
 
 export default function Addresses() {
@@ -43,7 +44,7 @@ export default function Addresses() {
       ) : size(addresses) === 0 ? (
         <Text style={styles.noAddressText}> Create your first Address</Text>
       ) : (
-        <Text>List of addresses</Text>
+        <AddressList addresses={addresses} />
       )}
     </ScrollView>
   );

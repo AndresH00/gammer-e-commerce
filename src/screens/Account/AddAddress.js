@@ -1,18 +1,32 @@
 import { StyleSheet, View, Text } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { TextInput, Button } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useNavigation } from "@react-navigation/native";
 import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
+import { addAddressApi } from "../../api/address";
+import useAuth from "../../hooks/useAuth";
 import { formStyles } from "../../styles";
 
 export default function AddAddress() {
+  const [loading, setLoading] = useState(false);
+  const { auth } = useAuth();
+  const navigation = useNavigation();
+
   const formik = useFormik({
     initialValues: initialValues(),
     validationSchema: Yup.object(validationSchema()),
-    onSubmit: (formData) => {
-      console.log("Creando direccion");
-      console.log(formData);
+    onSubmit: async (formData) => {
+      setLoading(true);
+      try {
+        const response = await addAddressApi(auth, formData);
+        console.log(response);
+        // navigation.goBack();
+      } catch (error) {
+        console.log(error);
+      }
+      setLoading(false);
     },
   });
 
@@ -30,9 +44,9 @@ export default function AddAddress() {
         <TextInput
           label="Name and lastname"
           style={formStyles.input}
-          onChangeText={(text) => formik.setFieldValue("name_lastename", text)}
-          value={formik.values.name_lastename}
-          error={formik.errors.name_lastename}
+          onChangeText={(text) => formik.setFieldValue("name_lastname", text)}
+          value={formik.values.name_lastname}
+          error={formik.errors.name_lastname}
         />
         <TextInput
           label="Address"
@@ -80,6 +94,7 @@ export default function AddAddress() {
           mode="contained"
           style={[formStyles.btnSuccess, styles.btnSuccess]}
           onPress={formik.handleSubmit}
+          loading={loading}
         >
           Create Address
         </Button>
@@ -91,7 +106,7 @@ export default function AddAddress() {
 function initialValues() {
   return {
     title: "",
-    name_lastename: "",
+    name_lastname: "",
     address: "",
     postal_code: "",
     city: "",
@@ -104,7 +119,7 @@ function initialValues() {
 function validationSchema() {
   return {
     title: Yup.string().required(true),
-    name_lastename: Yup.string().required(true),
+    name_lastname: Yup.string().required(true),
     address: Yup.string().required(true),
     postal_code: Yup.string().required(true),
     city: Yup.string().required(true),
