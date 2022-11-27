@@ -1,18 +1,45 @@
 import { StyleSheet, View, Text } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextInput, Button } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
 import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
-import { addAddressApi } from "../../api/address";
+import {
+  addAddressApi,
+  getAddressApi,
+  updateAdressApi,
+} from "../../api/address";
 import useAuth from "../../hooks/useAuth";
 import { formStyles } from "../../styles";
 
-export default function AddAddress() {
+export default function AddAddress(props) {
+  const {
+    route: { params },
+  } = props;
   const [loading, setLoading] = useState(false);
+  const [newAddress, setNewAddress] = useState(true);
   const { auth } = useAuth();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    (async () => {
+      if (params?.idAddress) {
+        setNewAddress(false);
+        navigation.setOptions({ title: "Update Address" });
+        const response = await getAddressApi(auth, params.idAddress);
+        await formik.setFieldValue("_id", response._id);
+        await formik.setFieldValue("title", response.title);
+        await formik.setFieldValue("name_lastname", response.name_lastname);
+        await formik.setFieldValue("address", response.address);
+        await formik.setFieldValue("postal_code", response.postal_code);
+        await formik.setFieldValue("city", response.city);
+        await formik.setFieldValue("state", response.state);
+        await formik.setFieldValue("country", response.country);
+        await formik.setFieldValue("phone", response.phone);
+      }
+    })();
+  }, [params]);
 
   const formik = useFormik({
     initialValues: initialValues(),
@@ -20,9 +47,9 @@ export default function AddAddress() {
     onSubmit: async (formData) => {
       setLoading(true);
       try {
-        const response = await addAddressApi(auth, formData);
-        console.log(response);
-        // navigation.goBack();
+        if (newAddress) await addAddressApi(auth, formData);
+        else await updateAdressApi(auth, formData);
+        navigation.goBack();
       } catch (error) {
         console.log(error);
       }
@@ -96,7 +123,7 @@ export default function AddAddress() {
           onPress={formik.handleSubmit}
           loading={loading}
         >
-          Create Address
+          {newAddress ? "Create Address" : "Update Address"}
         </Button>
       </View>
     </KeyboardAwareScrollView>

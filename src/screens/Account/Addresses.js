@@ -18,14 +18,17 @@ export default function Addresses() {
   const [addresses, setAddresses] = useState(null);
   const { auth } = useAuth();
   const navigation = useNavigation();
+  const [reloadAddress, setReloadAddress] = useState(false);
+
   useFocusEffect(
     useCallback(() => {
+      setAddresses(null);
       (async () => {
         const response = await getAddressesApi(auth);
         setAddresses(response);
-        console.log(response);
+        setReloadAddress(false);
       })();
-    }, [])
+    }, [reloadAddress])
   );
 
   return (
@@ -44,7 +47,10 @@ export default function Addresses() {
       ) : size(addresses) === 0 ? (
         <Text style={styles.noAddressText}> Create your first Address</Text>
       ) : (
-        <AddressList addresses={addresses} />
+        <AddressList
+          addresses={addresses}
+          setReloadAddress={setReloadAddress}
+        />
       )}
     </ScrollView>
   );
