@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { TextInput, Button } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
+import MapView, { Marker } from "react-native-maps";
 import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
 import {
@@ -21,7 +22,12 @@ export default function AddAddress(props) {
   const [newAddress, setNewAddress] = useState(true);
   const { auth } = useAuth();
   const navigation = useNavigation();
-
+  const [mapRegion, setMapRegion] = useState({
+    latitude: 37.78825,
+    longitude: -122.4324,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
   useEffect(() => {
     (async () => {
       if (params?.idAddress) {
@@ -126,6 +132,15 @@ export default function AddAddress(props) {
           {newAddress ? "Create Address" : "Update Address"}
         </Button>
       </View>
+      {/* <View style={styles.containerMap}>
+        <MapView style={styles.map}>
+          <Marker
+            draggable
+            coordinate={mapRegion}
+            onDragEnd={(e) => setMapRegion({ x: e.nativeEvent.coordinate })}
+          />
+        </MapView>
+      </View> */}
     </KeyboardAwareScrollView>
   );
 }
@@ -160,11 +175,19 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
   },
+  containerMap: {
+    flex: 2,
+    height: 300,
+  },
   title: {
     fontSize: 20,
     paddingVertical: 20,
   },
   btnSuccess: {
     marginBottom: 20,
+  },
+  map: {
+    width: "100%",
+    height: "100%",
   },
 });
